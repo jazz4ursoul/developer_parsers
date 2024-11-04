@@ -2,27 +2,16 @@ from src.config import requests, json
 
 
 def parse_flats():
-    page_limit = 20
+    page_limit = 1000
     offset = 0
-    url = "https://a101.ru/api/v2/flat/?ordering=actual_price"
 
-    response = requests.get(url)
-
-    if response.status_code != 200:
-        print(f"Error: {response.status_code}")
-        exit(1)
-
-    data = response.json()
+    data = dict()
+    data['next'] = 1
 
     flats = []
 
     while data['next'] is not None:
-        cur_flats = data['results']
-        flats.extend(cur_flats)
-
-        offset += page_limit
         url = f"https://a101.ru/api/v2/flat/?ordering=actual_price&limit={page_limit}&offset={offset}"
-
         response = requests.get(url)
 
         if response.status_code != 200:
@@ -31,4 +20,40 @@ def parse_flats():
 
         data = response.json()
 
-        print(len(flats))
+        cur_flats = data['results']
+        flats.extend(cur_flats)
+
+        offset += page_limit
+
+    print(len(flats))
+    print(flats[0])
+
+    flats_to_json = []
+
+    for flat in flats:
+        flat_id = flat['id']
+
+        DeveloperUrl = f"https://a101.ru/kvartiry/{flat_id}/"
+        Floor = int(flat['floor'])
+        Price = flat['actual_price']
+        Area = flat['area']
+        Rooms = flat['room']
+        Deadline = flat['stage']  # TODO ?
+        PlanImage = flat['plan_image']
+        ComplexSlug = flat['complex_slug']
+
+        cur_flat = {
+            "DeveloperUrl": DeveloperUrl,
+            "Floor": Floor,
+            "Price": Price,
+            "Area": Area,
+            "Rooms": Rooms,
+            "Deadline": Deadline,
+            "PlanImage": PlanImage,
+            "ComplexSlug": ComplexSlug
+        }
+
+        flats_to_json.append(cur_flat)
+
+    with open('flats.json', 'w') as file:
+        json.dump(flats_to_json, file)
