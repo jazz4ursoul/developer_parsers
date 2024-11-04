@@ -34,26 +34,25 @@ def parse_flats():
         flat_id = flat['id']
 
         DeveloperUrl = f"https://a101.ru/kvartiry/{flat_id}/"
-        Floor = int(flat['floor'])
+        Floor = flat['floor']
         Price = flat['actual_price']
         Area = flat['area']
         Rooms = flat['room']
         Deadline = flat['stage']  # TODO ?
         PlanImage = flat['plan_image']
-        ComplexSlug = flat['complex_slug']
+        ComplexName = flat['complex']
 
         cur_flat = {
-            "DeveloperUrl": DeveloperUrl,
-            "Floor": Floor,
-            "Price": Price,
-            "Area": Area,
-            "Rooms": Rooms,
-            "Deadline": Deadline,
-            "PlanImage": PlanImage,
-            "ComplexSlug": ComplexSlug
+            "developerUrl": DeveloperUrl,
+            "floor": Floor,
+            "price": Price,
+            "area": Area,
+            "rooms": Rooms,
+            "buildingDeadline": Deadline,
+            "layoutImage": PlanImage,
+            "ComplexName": ComplexName
         }
 
         flats_to_json.append(cur_flat)
 
-    with open('flats.json', 'w') as file:
-        json.dump(flats_to_json, file)
+    return flats_to_json

@@ -7,8 +7,7 @@ def parse_complex():
     response = requests.get(url)
 
     if response.status_code == 200:
-        data = response.json()
-        with open("complexes.json", 'w') as file:
-            json.dump(data, file)
+        return response.json()['results']
     else:
-        print(f'Error: {response.status_code}')
+        print(f'Error complex API request: status_code {response.status_code}')
+        exit(1)
